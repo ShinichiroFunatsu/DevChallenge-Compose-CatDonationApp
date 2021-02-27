@@ -20,7 +20,11 @@ import java.util.UUID
 data class Cat(
     val id: String = uuid(),
     val name: String? = null,
-    val age: Int
+    val age: Int,
+    val url: String,
+    val description: String = defaultDescription
 )
 
 private fun uuid() = UUID.randomUUID().toString()
+
+const val defaultDescription = "Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678."
