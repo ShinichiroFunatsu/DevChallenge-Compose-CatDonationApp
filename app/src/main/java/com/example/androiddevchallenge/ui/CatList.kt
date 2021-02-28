@@ -166,7 +166,7 @@ fun CatEasyDescription(cat: Cat) {
     ) {
         Spacer(modifier = Modifier.weight(1f))
         Text(
-            text = cat.name.takeUnless { it.isNullOrEmpty() } ?: "[No Name]",
+            text = cat.nameOrDefault("[No Name]"),
             fontSize = 9.sp,
             color = Color.White
         )

@@ -23,8 +23,10 @@ data class Cat(
     val age: Int,
     val url: String,
     val description: String = defaultDescription
-)
+) {
+    fun nameOrDefault(default: String) = name.takeUnless { it.isNullOrEmpty() } ?: default
+}
 
 private fun uuid() = UUID.randomUUID().toString()
 
-const val defaultDescription = "Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678."
+const val defaultDescription = "Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx. Xxx, XXX_XXX_XXX_XXX, 123-45678.Xxxx Xxx XxxXxxXxx xx."
