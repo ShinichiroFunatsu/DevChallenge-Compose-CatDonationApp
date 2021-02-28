@@ -16,10 +16,22 @@
 package com.example.androiddevchallenge.data
 
 import com.example.androiddevchallenge.model.Cat
+import com.example.androiddevchallenge.utils.addOrRemove
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 
 object CatRepository {
+
+    private val favorites = MutableStateFlow<Set<String>>(setOf())
+    fun observeFavorites(): Flow<Set<String>> = favorites
+    suspend fun toggleFavorite(postId: String) {
+        val set = favorites.value.toMutableSet()
+        set.addOrRemove(postId)
+        favorites.value = set
+    }
+
     private val all by lazy {
         listOf(
             fiveCat(

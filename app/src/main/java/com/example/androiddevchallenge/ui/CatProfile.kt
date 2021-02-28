@@ -40,6 +40,9 @@ import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -51,6 +54,7 @@ import com.example.androiddevchallenge.data.CatRepository
 import com.example.androiddevchallenge.model.Cat
 import com.example.androiddevchallenge.utils.produceUiState
 import dev.chrisbanes.accompanist.coil.CoilImage
+import kotlinx.coroutines.launch
 
 @Composable
 fun CatProfile(
@@ -58,17 +62,28 @@ fun CatProfile(
     catId: String,
     catRepository: CatRepository,
 ) {
-    val (cat) = produceUiState(catRepository, key = catId) {
+    val (catResult) = produceUiState(catRepository, key = catId) {
         findById(catId)
     }
-    val catData = cat.value.data ?: return
+    val favorites by catRepository.observeFavorites().collectAsState(setOf())
+    val coroutineScope = rememberCoroutineScope()
+
+    val cat = catResult.value.data ?: return
+
     Box(modifier = Modifier.fillMaxHeight()) {
         Surface {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                CatProfileContent(cat = catData, onAdoptionClick = { /* TODO Click */ })
+                CatProfileContent(
+                    cat = cat,
+                    favorites = favorites,
+                    onToggleFavorite = {
+                        coroutineScope.launch { catRepository.toggleFavorite(it) }
+                    },
+                    onAdoptionClick = { /* TODO Click */ }
+                )
             }
         }
         ProfileBackFab(
@@ -79,7 +94,12 @@ fun CatProfile(
 }
 
 @Composable
-fun CatProfileContent(cat: Cat, onAdoptionClick: () -> Unit) {
+fun CatProfileContent(
+    cat: Cat,
+    favorites: Set<String>,
+    onToggleFavorite: (catId: String) -> Unit,
+    onAdoptionClick: (cat: Cat) -> Unit
+) {
     Box(modifier = Modifier.fillMaxHeight()) {
         Column(modifier = Modifier.fillMaxWidth()) {
             CatLargeImage(
@@ -112,8 +132,8 @@ fun CatProfileContent(cat: Cat, onAdoptionClick: () -> Unit) {
                     modifier = Modifier
                         .padding(top = 24.dp, end = 12.dp)
                         .align(Alignment.TopEnd),
-                    isFavorite = true,
-                    onClick = { /*TODO*/ }
+                    isFavorite = favorites.contains(cat.id),
+                    onClick = { onToggleFavorite(cat.id) }
                 )
             }
         }
@@ -124,7 +144,7 @@ fun CatProfileContent(cat: Cat, onAdoptionClick: () -> Unit) {
 fun CatDescription(
     modifier: Modifier,
     cat: Cat,
-    onAdoptionClick: () -> Unit
+    onAdoptionClick: (cat: Cat) -> Unit
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Spacer(modifier = modifier.padding(top = 44.dp))
@@ -148,7 +168,7 @@ fun CatDescription(
         Spacer(modifier = modifier.weight(1f))
         Box(modifier = Modifier.fillMaxWidth()) {
             Button(
-                onClick = onAdoptionClick,
+                onClick = { onAdoptionClick(cat) },
                 modifier = Modifier
                     .align(Alignment.Center)
                     .width(200.dp)

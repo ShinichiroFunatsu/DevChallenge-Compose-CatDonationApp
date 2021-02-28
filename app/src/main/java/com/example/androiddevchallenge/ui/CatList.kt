@@ -38,6 +38,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -60,19 +62,24 @@ fun CatList(
     modifier: Modifier = Modifier,
     onItemClick: (cat: Cat) -> Unit = {},
 ) {
-    val (catLists) = produceUiState(catRepository, key = null) {
+    val (catsListResult) = produceUiState(catRepository, key = null) {
         getAll()
     }
-    catLists.value.data ?: return
+    val catList = catsListResult.value.data ?: return
+    val favorites by catRepository.observeFavorites().collectAsState(setOf())
 
     LazyColumn(modifier = modifier) {
-        items(items = catLists.value.data!!) { item: CatList ->
+        items(items = catList) { item: CatList ->
             when (item) {
                 is CatList.FiveCats -> {
                     FiveContent(
                         modifier = Modifier.aspectRatio(1.5f),
                         contents = item.cats.map { cat ->
-                            provideCatEasyProfileTemplate(cat, true, onItemClick)
+                            provideCatEasyProfileTemplate(
+                                cat,
+                                favorites.contains(cat.id),
+                                onItemClick
+                            )
                         }
                     )
                 }
@@ -80,7 +87,11 @@ fun CatList(
                     SixContent(
                         modifier = Modifier.aspectRatio(1.5f),
                         contents = item.cats.map { cat ->
-                            provideCatEasyProfileTemplate(cat, true, onItemClick)
+                            provideCatEasyProfileTemplate(
+                                cat,
+                                favorites.contains(cat.id),
+                                onItemClick
+                            )
                         }
                     )
                 }
@@ -88,7 +99,11 @@ fun CatList(
                     ThreeContent(
                         modifier = Modifier.aspectRatio(1.5f),
                         contents = item.cats.map { cat ->
-                            provideCatEasyProfileTemplate(cat, true, onItemClick)
+                            provideCatEasyProfileTemplate(
+                                cat,
+                                favorites.contains(cat.id),
+                                onItemClick
+                            )
                         }
                     )
                 }

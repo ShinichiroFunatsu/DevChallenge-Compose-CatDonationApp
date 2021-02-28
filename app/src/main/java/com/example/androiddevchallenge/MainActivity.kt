@@ -92,7 +92,7 @@ fun MyApp() {
                 CatProfile(
                     navController = navController,
                     catId = backStackEntry.arguments?.getString("catId")!!,
-                    catRepository = CatRepository
+                    catRepository = CatRepository,
                 )
             }
         }
