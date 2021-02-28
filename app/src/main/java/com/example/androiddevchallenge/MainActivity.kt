@@ -26,8 +26,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
+import androidx.navigation.compose.navigate
+import androidx.navigation.compose.rememberNavController
 import com.example.androiddevchallenge.data.CatRepository
 import com.example.androiddevchallenge.ui.CatList
+import com.example.androiddevchallenge.ui.CatProfile
 import com.example.androiddevchallenge.ui.theme.MyTheme
 
 class MainActivity : AppCompatActivity() {
@@ -41,14 +47,43 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
+sealed class Screen(val route: String) {
+    object CatList : Screen("catList")
+    object CatProfile : Screen("catProfile") {
+        fun path(catId: String) = "$route/$catId"
+    }
+}
+
 // Start building your app here!
 @Composable
 fun MyApp() {
+    val navController = rememberNavController()
     Surface(color = MaterialTheme.colors.background) {
-        CatList(
-            catRepository = CatRepository,
-            modifier = Modifier.padding(horizontal = 24.dp)
-        )
+        NavHost(navController, startDestination = Screen.CatList.route) {
+            composable(Screen.CatList.route) {
+                CatList(
+                    catRepository = CatRepository,
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    onItemClick = { cat ->
+                        navController.navigate(Screen.CatProfile.path(cat.id))
+                    }
+                )
+            }
+            composable(
+                route = "${Screen.CatProfile.route}/{catId}",
+                arguments = listOf(
+                    navArgument("catId") {
+                        nullable = false
+                    }
+                )
+            ) { backStackEntry ->
+                CatProfile(
+                    catId = backStackEntry.arguments?.getString("catId")!!,
+                    catRepository = CatRepository,
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                )
+            }
+        }
     }
 }
 

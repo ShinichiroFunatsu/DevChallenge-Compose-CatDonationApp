@@ -49,7 +49,11 @@ import dev.chrisbanes.accompanist.coil.CoilImage
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CatList(catRepository: CatRepository, modifier: Modifier = Modifier) {
+fun CatList(
+    catRepository: CatRepository,
+    modifier: Modifier = Modifier,
+    onItemClick: (cat: Cat) -> Unit = {},
+) {
     val (catLists) = produceUiState(catRepository, key = null) {
         getAll()
     }
@@ -62,7 +66,7 @@ fun CatList(catRepository: CatRepository, modifier: Modifier = Modifier) {
                     FiveContent(
                         modifier = Modifier.aspectRatio(1.5f),
                         contents = item.cats.map { cat ->
-                            provideCatEasyProfileTemplate(cat)
+                            provideCatEasyProfileTemplate(cat, onItemClick)
                         }
                     )
                 }
@@ -70,7 +74,7 @@ fun CatList(catRepository: CatRepository, modifier: Modifier = Modifier) {
                     SixContent(
                         modifier = Modifier.aspectRatio(1.5f),
                         contents = item.cats.map { cat ->
-                            provideCatEasyProfileTemplate(cat)
+                            provideCatEasyProfileTemplate(cat, onItemClick)
                         }
                     )
                 }
@@ -78,7 +82,7 @@ fun CatList(catRepository: CatRepository, modifier: Modifier = Modifier) {
                     ThreeContent(
                         modifier = Modifier.aspectRatio(1.5f),
                         contents = item.cats.map { cat ->
-                            provideCatEasyProfileTemplate(cat)
+                            provideCatEasyProfileTemplate(cat, onItemClick)
                         }
                     )
                 }
@@ -89,7 +93,7 @@ fun CatList(catRepository: CatRepository, modifier: Modifier = Modifier) {
 
 private fun provideCatEasyProfileTemplate(
     cat: Cat,
-    onItemClick: (cat: Cat) -> Unit = {},
+    onItemClick: (cat: Cat) -> Unit,
 ): @Composable () -> Unit = {
     CatEasyProfile(
         cat = cat,
