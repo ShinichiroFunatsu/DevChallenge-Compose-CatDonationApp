@@ -16,11 +16,20 @@
 package com.example.androiddevchallenge.ui
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.sp
 import com.example.androiddevchallenge.data.CatRepository
 import com.example.androiddevchallenge.utils.produceUiState
+import dev.chrisbanes.accompanist.coil.CoilImage
 
 @Composable
 fun CatProfile(
@@ -31,8 +40,40 @@ fun CatProfile(
     val (cat) = produceUiState(catRepository, key = catId) {
         findById(catId)
     }
-    cat.value.data ?: return
+    val catData = cat.value.data ?: return
     Box(modifier = modifier) {
-        Text(text = cat.value.data?.name!!)
+        Column(modifier = Modifier.fillMaxWidth()) {
+            CatLargeImage(
+                url = catData.url,
+                modifier = Modifier.fillMaxWidth().aspectRatio(1.5f)
+            )
+            Text(
+                text = catData.name.takeUnless { it.isNullOrEmpty() } ?: "[No Name]",
+                style = MaterialTheme.typography.h3,
+            )
+        }
     }
+}
+
+@Composable
+fun CatLargeImage(url: String, modifier: Modifier) {
+    CoilImage(
+        data = url,
+        modifier = modifier,
+        contentScale = ContentScale.Crop,
+        contentDescription = "cat image",
+        error = {
+            Box(
+                Modifier.matchParentSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "${it.throwable.cause}", fontSize = 8.sp)
+            }
+        },
+        loading = {
+            Box(Modifier.matchParentSize()) {
+                CircularProgressIndicator(Modifier.align(Alignment.Center))
+            }
+        }
+    )
 }

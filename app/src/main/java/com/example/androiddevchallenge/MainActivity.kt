@@ -98,8 +98,7 @@ fun MyApp() {
             ) { backStackEntry ->
                 CatProfile(
                     catId = backStackEntry.arguments?.getString("catId")!!,
-                    catRepository = CatRepository,
-                    modifier = Modifier.padding(horizontal = 24.dp)
+                    catRepository = CatRepository
                 )
             }
         }

@@ -141,7 +141,6 @@ fun CatImage(url: String, modifier: Modifier) {
         modifier = modifier,
         contentScale = ContentScale.Crop,
         contentDescription = "cat image",
-        fadeIn = true,
         error = {
             Box(
                 Modifier.matchParentSize(),
