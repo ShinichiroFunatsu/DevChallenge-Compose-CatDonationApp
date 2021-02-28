@@ -18,12 +18,15 @@ package com.example.androiddevchallenge
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
@@ -35,13 +38,21 @@ import com.example.androiddevchallenge.data.CatRepository
 import com.example.androiddevchallenge.ui.CatList
 import com.example.androiddevchallenge.ui.CatProfile
 import com.example.androiddevchallenge.ui.theme.MyTheme
+import com.example.androiddevchallenge.utils.LocalImageLoader
+import com.example.androiddevchallenge.utils.ProvideImageLoader
+import com.example.androiddevchallenge.utils.createGifAnimLoader
+import com.example.androiddevchallenge.utils.getGifUri
+import dev.chrisbanes.accompanist.coil.CoilImage
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val gifAnimLoader = createGifAnimLoader(this)
         setContent {
             MyTheme {
-                MyApp()
+                ProvideImageLoader(imageLoader = gifAnimLoader) {
+                    MyApp()
+                }
             }
         }
     }
@@ -59,6 +70,14 @@ sealed class Screen(val route: String) {
 fun MyApp() {
     val navController = rememberNavController()
     Surface(color = MaterialTheme.colors.background) {
+        // fixed paws background
+        CoilImage(
+            data = getGifUri(R.raw.paws),
+            modifier = Modifier.fillMaxSize().alpha(0.5f).rotate(30f),
+            contentScale = ContentScale.FillHeight,
+            imageLoader = LocalImageLoader.current,
+            contentDescription = "paws gif",
+        )
         NavHost(navController, startDestination = Screen.CatList.route) {
             composable(Screen.CatList.route) {
                 CatList(

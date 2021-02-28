@@ -82,6 +82,8 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:1.0.0-alpha08"
     // Image Loader
     implementation "dev.chrisbanes.accompanist:accompanist-coil:0.6.0"
+    // Animation Gif Loader
+    implementation "io.coil-kt:coil-gif:1.1.1"
 
     testImplementation 'junit:junit:4.13.2'
 
