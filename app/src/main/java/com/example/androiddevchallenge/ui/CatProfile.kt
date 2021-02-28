@@ -45,7 +45,7 @@ fun CatProfile(
         Column(modifier = Modifier.fillMaxWidth()) {
             CatLargeImage(
                 url = catData.url,
-                modifier = Modifier.fillMaxWidth().aspectRatio(1.5f)
+                modifier = Modifier.fillMaxWidth().aspectRatio(1.2f)
             )
             Text(
                 text = catData.name.takeUnless { it.isNullOrEmpty() } ?: "[No Name]",
