@@ -30,12 +30,15 @@ import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.FloatingActionButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -89,16 +92,28 @@ fun CatProfileContent(cat: Cat, onAdoptionClick: () -> Unit) {
         }
         Column(modifier = Modifier.fillMaxSize()) {
             Spacer(modifier = Modifier.weight(1f))
-            Card(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1.4f),
-                shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)
+                    .weight(1.4f)
             ) {
-                CatDescription(
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                    cat = cat,
-                    onAdoptionClick = onAdoptionClick
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)
+                ) {
+                    CatDescription(
+                        modifier = Modifier.padding(horizontal = 24.dp),
+                        cat = cat,
+                        onAdoptionClick = onAdoptionClick
+                    )
+                }
+                ProfileFavoriteFab(
+                    modifier = Modifier
+                        .padding(top = 24.dp, end = 12.dp)
+                        .align(Alignment.TopEnd),
+                    isFavorite = true,
+                    onClick = { /*TODO*/ }
                 )
             }
         }
@@ -187,6 +202,29 @@ fun ProfileBackFab(
         Icon(
             imageVector = Icons.Outlined.ArrowBack,
             contentDescription = "back icon"
+        )
+    }
+}
+
+@Composable
+fun ProfileFavoriteFab(
+    modifier: Modifier = Modifier,
+    isFavorite: Boolean,
+    onClick: () -> Unit
+) {
+    FloatingActionButton(
+        onClick = onClick,
+        modifier = modifier
+            .padding(16.dp)
+            .height(48.dp)
+            .widthIn(min = 48.dp),
+        elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 4.dp, 8.dp),
+        backgroundColor = MaterialTheme.colors.surface,
+        contentColor = MaterialTheme.colors.primary
+    ) {
+        Icon(
+            imageVector = if (isFavorite) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
+            contentDescription = "fav icon"
         )
     }
 }

@@ -32,10 +32,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
@@ -66,7 +72,7 @@ fun CatList(
                     FiveContent(
                         modifier = Modifier.aspectRatio(1.5f),
                         contents = item.cats.map { cat ->
-                            provideCatEasyProfileTemplate(cat, onItemClick)
+                            provideCatEasyProfileTemplate(cat, true, onItemClick)
                         }
                     )
                 }
@@ -74,7 +80,7 @@ fun CatList(
                     SixContent(
                         modifier = Modifier.aspectRatio(1.5f),
                         contents = item.cats.map { cat ->
-                            provideCatEasyProfileTemplate(cat, onItemClick)
+                            provideCatEasyProfileTemplate(cat, true, onItemClick)
                         }
                     )
                 }
@@ -82,7 +88,7 @@ fun CatList(
                     ThreeContent(
                         modifier = Modifier.aspectRatio(1.5f),
                         contents = item.cats.map { cat ->
-                            provideCatEasyProfileTemplate(cat, onItemClick)
+                            provideCatEasyProfileTemplate(cat, true, onItemClick)
                         }
                     )
                 }
@@ -93,10 +99,12 @@ fun CatList(
 
 private fun provideCatEasyProfileTemplate(
     cat: Cat,
+    isFavorite: Boolean,
     onItemClick: (cat: Cat) -> Unit,
 ): @Composable () -> Unit = {
     CatEasyProfile(
         cat = cat,
+        isFavorite = isFavorite,
         modifier = Modifier.padding(4.dp),
         cornerRadius = 8.dp,
         onItemClick = onItemClick,
@@ -106,6 +114,7 @@ private fun provideCatEasyProfileTemplate(
 @Composable
 fun CatEasyProfile(
     cat: Cat,
+    isFavorite: Boolean,
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 8.dp,
     onItemClick: (cat: Cat) -> Unit = {},
@@ -129,6 +138,18 @@ fun CatEasyProfile(
             ) {
                 Spacer(modifier = Modifier.weight(1f))
                 CatEasyDescription(cat = cat)
+            }
+            // favorite icon
+            if (isFavorite) {
+                Icon(
+                    modifier = Modifier
+                        .scale(0.8f)
+                        .padding(top = 4.dp, end = 4.dp)
+                        .align(Alignment.TopEnd),
+                    imageVector = Icons.Outlined.Favorite,
+                    tint = MaterialTheme.colors.primary,
+                    contentDescription = "fav icon"
+                )
             }
         }
     }
