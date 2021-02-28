@@ -71,13 +71,13 @@ fun MyApp() {
     val navController = rememberNavController()
     Surface(color = MaterialTheme.colors.background) {
         // fixed paws background
-        CoilImage(
-            data = getGifUri(R.raw.paws),
-            modifier = Modifier.fillMaxSize().alpha(0.5f).rotate(30f),
-            contentScale = ContentScale.FillHeight,
-            imageLoader = LocalImageLoader.current,
-            contentDescription = "paws gif",
-        )
+//        CoilImage(
+//            data = getGifUri(R.raw.paws),
+//            modifier = Modifier.fillMaxSize().alpha(0.5f).rotate(30f),
+//            contentScale = ContentScale.FillHeight,
+//            imageLoader = LocalImageLoader.current,
+//            contentDescription = "paws gif",
+//        )
         NavHost(navController, startDestination = Screen.CatList.route) {
             composable(Screen.CatList.route) {
                 CatList(
