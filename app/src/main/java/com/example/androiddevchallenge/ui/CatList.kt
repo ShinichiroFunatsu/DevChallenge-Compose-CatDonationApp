@@ -15,17 +15,18 @@
  */
 package com.example.androiddevchallenge.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,59 +36,95 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.androiddevchallenge.data.CatList
+import com.example.androiddevchallenge.data.CatRepository
 import com.example.androiddevchallenge.model.Cat
+import com.example.androiddevchallenge.utils.produceUiState
 import dev.chrisbanes.accompanist.coil.CoilImage
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CatList(cats: List<Cat>, modifier: Modifier = Modifier) {
+fun CatList(catRepository: CatRepository, modifier: Modifier = Modifier) {
+    val (catLists) = produceUiState(catRepository, key = null) {
+        getAll()
+    }
+    catLists.value.data ?: return
+
     LazyColumn(modifier = modifier) {
-        items(items = cats) { cat ->
-            CatOverView(cat = cat)
+        items(items = catLists.value.data!!) { item: CatList ->
+            when (item) {
+                is CatList.FiveCats -> {
+                    FiveContent(
+                        modifier = Modifier.aspectRatio(1.5f),
+                        contents = item.cats.map { cat ->
+                            provideCatEasyProfileTemplate(cat)
+                        }
+                    )
+                }
+                is CatList.SixCats -> {
+                    SixContent(
+                        modifier = Modifier.aspectRatio(1.5f),
+                        contents = item.cats.map { cat ->
+                            provideCatEasyProfileTemplate(cat)
+                        }
+                    )
+                }
+                is CatList.ThreeCats -> {
+                    ThreeContent(
+                        modifier = Modifier.aspectRatio(1.5f),
+                        contents = item.cats.map { cat ->
+                            provideCatEasyProfileTemplate(cat)
+                        }
+                    )
+                }
+            }
         }
     }
 }
 
-@Composable
-fun CatOverView(cat: Cat) {
-    Card(
-        shape = RoundedCornerShape(8.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(4.dp)
-            .clickable {
-                // TODO: Transition to Detail
-            },
-    ) {
+private fun provideCatEasyProfileTemplate(
+    cat: Cat,
+    onItemClick: (cat: Cat) -> Unit = {},
+): @Composable () -> Unit = {
+    CatEasyProfile(
+        cat = cat,
+        modifier = Modifier.padding(4.dp),
+        cornerRadius = 8.dp,
+        onItemClick = onItemClick,
+    )
+}
 
+@Composable
+fun CatEasyProfile(
+    cat: Cat,
+    modifier: Modifier = Modifier,
+    cornerRadius: Dp = 8.dp,
+    onItemClick: (cat: Cat) -> Unit = {},
+) {
+    Card(
+        shape = RoundedCornerShape(cornerRadius),
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
         Box(
             modifier = Modifier
-                .size(46.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color.Gray),
+                .clickable { onItemClick(cat) },
             contentAlignment = Alignment.Center
         ) {
-
             CatImage(
                 modifier = Modifier.fillMaxSize(),
                 url = cat.url
             )
-
-            Row(
+            Column(
                 modifier = Modifier.fillMaxSize(),
-                verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Spacer(modifier = Modifier.weight(1f))
-                Column {
-                    Text(text = cat.name.takeUnless { it.isNullOrEmpty() } ?: "[No Name]")
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = "Age: ${cat.age}")
-                }
+                CatEasyDescription(cat = cat)
             }
         }
     }
@@ -115,4 +152,193 @@ fun CatImage(url: String, modifier: Modifier) {
             }
         }
     )
+}
+
+@Composable
+fun CatEasyDescription(cat: Cat) {
+    Row(
+        modifier = Modifier
+            .background(Color.Black.copy(alpha = 0.4f))
+            .padding(horizontal = 12.dp, vertical = 4.dp),
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = cat.name.takeUnless { it.isNullOrEmpty() } ?: "[No Name]",
+            fontSize = 9.sp,
+            color = Color.White
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Text(
+            text = "Age: ${cat.age}",
+            fontSize = 8.sp,
+            color = Color.White.copy(alpha = 0.6f)
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun FiveContent(
+    modifier: Modifier = Modifier,
+    contents: List<@Composable () -> Unit>,
+) {
+    // 5 content
+    // 1x1 * 4
+    // 1x2 * 1
+    check(contents.size == 5)
+    Row(modifier = modifier) {
+        // 1x1 * 4
+        Column(Modifier.weight(2f)) {
+            Row(
+                modifier = Modifier.weight(1f)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
+                ) {
+                    contents[0]()
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
+                ) {
+                    contents[1]()
+                }
+            }
+            Row(
+                modifier = Modifier.weight(1f)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
+                ) {
+                    contents[2]()
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
+                ) {
+                    contents[3]()
+                }
+            }
+        }
+        // 1x2 * 1
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .aspectRatio(0.5f)
+        ) {
+            contents[4]()
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun SixContent(
+    modifier: Modifier = Modifier,
+    contents: List<@Composable () -> Unit>,
+) {
+    // 3x2 grid
+    // total 6 content
+    // 1x1 * 6
+    check(contents.size == 6)
+    // 1x1 * 6
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier.weight(1f)
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+            ) {
+                contents[0]()
+            }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+            ) {
+                contents[1]()
+            }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+            ) {
+                contents[2]()
+            }
+        }
+        Row(
+            modifier = Modifier.weight(1f)
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+            ) {
+                contents[3]()
+            }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+            ) {
+                contents[4]()
+            }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+            ) {
+                contents[5]()
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ThreeContent(
+    modifier: Modifier = Modifier,
+    contents: List<@Composable () -> Unit>,
+) {
+    // 3 content
+    // 2x2 * 1
+    // 1x1 * 2
+    check(contents.size == 3)
+    Row(modifier = modifier) {
+        // 2x2 * 1
+        Box(
+            modifier = Modifier
+                .weight(2f)
+                .aspectRatio(1f)
+        ) {
+            contents[0]()
+        }
+        // 1x1 * 2
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+            ) {
+                contents[1]()
+            }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+            ) {
+                contents[2]()
+            }
+        }
+    }
 }

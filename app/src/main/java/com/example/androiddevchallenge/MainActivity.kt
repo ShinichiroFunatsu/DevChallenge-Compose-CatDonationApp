@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 fun MyApp() {
     Surface(color = MaterialTheme.colors.background) {
         CatList(
-            cats = CatRepository.getAll(),
+            catRepository = CatRepository,
             modifier = Modifier.padding(horizontal = 24.dp)
         )
     }
