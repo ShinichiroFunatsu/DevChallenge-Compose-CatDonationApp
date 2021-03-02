@@ -15,7 +15,7 @@ Cat adoption App made by Jetpack Compose.
 This repository is my challenge for [AndroidDevChallenge](https://developer.android.com/dev-challenge).
 Twitter: [#AndroidDevChallenge](https://twitter.com/search?q=%23AndroidDevChallenge)
 ### Feature
-- Instagram like list and Detail.
+- Contain have cats list screen like Instagram and cat profile screen.
 - Favorite Function Over Two Screen.
 - Using [TheCatApi](https://thecatapi.com/) free "Very Cute Cat" photos. 
 ## :camera_flash: Screenshots
